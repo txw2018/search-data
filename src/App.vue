@@ -1,5 +1,6 @@
 <script setup>
 import {onMounted,ref} from 'vue'
+import axios from 'axios'
 import ExcelFile from "./excel.xlsx?sheetjs"
 import { Form, Field, CellGroup,Button} from 'vant';
 const username = ref('');
@@ -7,13 +8,17 @@ const cdCard = ref('');
 const result = ref('')
 const loading = ref(false)
 const onSubmit = (values) => {
-  console.log(ExcelFile);
-  const data = ExcelFile.filter(item => {
-    return item['姓名'] == username.value && item['身份证'] == cdCard.value
+  axios.get('https://service-ioate8yw-1258336146.gz.apigw.tencentcs.com/release/search',{
+    params:{
+      username:username.value,
+      cdCard:cdCard.value
+    }
+  }).then(res => {
+    const data = res.data.data
+    if(data.length>0){
+      result.value = data[0]
+    }
   })
-  if(data.length){
-    result.value = data[0]
-  }
 };
 
 
