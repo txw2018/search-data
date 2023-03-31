@@ -2,12 +2,28 @@
 import {onMounted,ref} from 'vue'
 import axios from 'axios'
 import ExcelFile from "./excel.xlsx?sheetjs"
-import { Form, Field, CellGroup,Button} from 'vant';
+import { Form, Field, CellGroup,Button,Toast} from 'vant';
+import { showToast } from 'vant';
+function debounce(fn, delay = 500) {
+    // timer 是在闭包中的
+    let timer = null;
+    
+    return function() {
+        if (timer) {
+            clearTimeout(timer)
+        }
+        timer = setTimeout(() => {
+            fn.apply(this, arguments)
+            timer = null
+        }, delay)
+    }
+}
 const username = ref('');
 const cdCard = ref('');
-const result = ref('')
+const result = ref(null)
 const loading = ref(false)
-const onSubmit = (values) => {
+const onSubmit = debounce((values) => {
+  result.value = null
   axios.get('https://service-ioate8yw-1258336146.gz.apigw.tencentcs.com/release/search',{
     params:{
       username:username.value,
@@ -17,9 +33,11 @@ const onSubmit = (values) => {
     const data = res.data.data
     if(data.length>0){
       result.value = data[0]
+    }else{
+      showToast('未查到数据');
     }
   })
-};
+});
 
 
 
