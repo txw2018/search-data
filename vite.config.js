@@ -9,7 +9,10 @@ import { read, utils } from 'xlsx';
 // https://vitejs.dev/config/
 export default defineConfig({
   assetsInclude: ['**/*.xlsx'], // xlsx file should be treated as assets
-
+  base:"./", //设置项目的根目录
+  build: {
+    outDir: 'docs' // 打包文件的输出目录
+  },
   plugins: [vue(), vueJsx(), 
    { // this plugin handles ?sheetjs tags
     name: "vite-sheet",

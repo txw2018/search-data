@@ -15,6 +15,6 @@ git add -A
 git commit -m 'deploy'
 
 # 如果发布到 https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:txw2018/serach-excel.git main:gh-pages
+git push -f git@github.com:txw2018/search-data.git main:gh-pages
 
 cd -
