@@ -80,9 +80,15 @@ const onSubmit = debounce((values) => {
   </div>
   <div class="result">
     <div v-if="result" class="content">
-        <CellGroup inset>
+      <ul>
+        <li class="list"  v-for="(value,key) in result" :key="key" >
+          <span class="key">{{key}}:</span>
+          <span class="value">{{value}}</span>
+        </li>
+      </ul>
+        <!-- <CellGroup inset>
           <Field v-for="(value,key) in result" label-width="7em" :key="key" :label="key + '：'" :model-value="value" readonly />
-        </CellGroup>
+        </CellGroup> -->
       </div>
         <div v-else>
         暂无数据
@@ -108,5 +114,21 @@ header{
   text-align: center;
   font-size: 16px;
   font-weight: 600;
+}
+.list{
+  margin: 0 10px;
+  padding: 5px 0;
+  border-bottom: 1px solid #ebedf0;
+  display: flex;
+  font-size: 14px;
+  text-align: left;
+}
+.key{
+  width: 100px;
+  
+}
+.value{
+  margin-left: 5px;
+  flex: 1;
 }
 </style>
