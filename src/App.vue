@@ -2,7 +2,9 @@
 import {onMounted,ref} from 'vue'
 import axios from 'axios'
 import ExcelFile from "./excel.xlsx?sheetjs"
-import { Form, Field, CellGroup,Button,Toast} from 'vant';
+import { Form, Field, CellGroup,Button,Toast,showLoadingToast,closeToast } from 'vant';
+
+
 import { showToast } from 'vant';
 function debounce(fn, delay = 500) {
     // timer 是在闭包中的
@@ -24,18 +26,26 @@ const result = ref(null)
 const loading = ref(false)
 const onSubmit = debounce((values) => {
   result.value = null
+  showLoadingToast({
+    message: '加载中...',
+    forbidClick: true,
+  });
   axios.get('https://service-ioate8yw-1258336146.gz.apigw.tencentcs.com/release/search',{
     params:{
       username:username.value,
       cdCard:cdCard.value
     }
   }).then(res => {
+    closeToast();
     const data = res.data.data
     if(data.length>0){
+      delete data[0]['身份证号码']
       result.value = data[0]
     }else{
       showToast('未查到数据');
     }
+  }).catch(err => {
+     closeToast();
   })
 });
 
@@ -44,7 +54,7 @@ const onSubmit = debounce((values) => {
 </script>
 
 <template>
-<header>数据查询</header>
+<header>宁乡市2023年团员编号分配</header>
 <Form @submit="onSubmit">
   <CellGroup inset>
     <Field
@@ -57,10 +67,10 @@ const onSubmit = debounce((values) => {
     <Field
       v-model="cdCard"
       type="cdCard"
-      name="身份证"
-      label="身份证"
-      placeholder="身份证"
-      :rules="[{ required: true, message: '请填写身份证' }]"
+      name="身份证号码"
+      label="身份证号码"
+      placeholder="身份证号码"
+      :rules="[{ required: true, message: '请填写身份证号码' }]"
     />
   </CellGroup>
   <div style="margin: 16px;">
@@ -70,7 +80,9 @@ const onSubmit = debounce((values) => {
   </div>
   <div class="result">
     <div v-if="result" class="content">
-        编号{{result['编号']}}
+        <CellGroup inset>
+          <Field v-for="(value,key) in result" label-width="7em" :key="key" :label="key + '：'" :model-value="value" readonly />
+        </CellGroup>
       </div>
         <div v-else>
         暂无数据
@@ -94,5 +106,7 @@ header{
   height: 50px;
   line-height: 50px;
   text-align: center;
+  font-size: 16px;
+  font-weight: 600;
 }
 </style>
