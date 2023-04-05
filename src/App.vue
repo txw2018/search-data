@@ -136,8 +136,8 @@ header{
   display: inline-block;
   position: absolute;
   bottom: 0;
-  left: 5px;
-  right: 5px;
+  left: 0px;
+  right: 0px;
   border-bottom: 1px solid #ebedf0;
   transform: scaleY(0.5);
 
