@@ -22,10 +22,10 @@ function debounce(fn, delay = 500) {
 }
 const username = ref('');
 const cdCard = ref('');
-const result = ref(null)
+const result = ref([])
 const loading = ref(false)
 const onSubmit = debounce((values) => {
-  result.value = null
+  result.value = []
   showLoadingToast({
     message: '加载中...',
     forbidClick: true,
@@ -39,8 +39,13 @@ const onSubmit = debounce((values) => {
     closeToast();
     const data = res.data.data
     if(data.length>0){
-      delete data[0]['身份证号码']
-      result.value = data[0]
+     
+      result.value = data.map(item => {
+        delete item['身份证号码']
+        return {
+          ...item,
+        }
+      })
     }else{
       showToast('未查到数据');
     }
@@ -79,16 +84,13 @@ const onSubmit = debounce((values) => {
     </Button>
   </div>
   <div class="result">
-    <div v-if="result" class="content">
-      <ul>
-        <li class="list"  v-for="(value,key) in result" :key="key" >
+    <div v-if="result.length" class="content">
+      <ul class="content-wrap" v-for="(item,index) in result"  :key="index">
+        <li class="list"  v-for="(value,key) in item" :key="key" >
           <span class="key">{{key}}:</span>
           <span class="value">{{value}}</span>
         </li>
       </ul>
-        <!-- <CellGroup inset>
-          <Field v-for="(value,key) in result" label-width="7em" :key="key" :label="key + '：'" :model-value="value" readonly />
-        </CellGroup> -->
       </div>
         <div v-else>
         暂无数据
@@ -108,6 +110,12 @@ const onSubmit = debounce((values) => {
 .content{
   font-size: 20px;
 }
+.content-wrap{
+  margin-bottom: 10px;
+}
+.content-wrap li:first-child{
+  color: red;
+}
 header{
   height: 50px;
   line-height: 50px;
@@ -116,12 +124,24 @@ header{
   font-weight: 600;
 }
 .list{
-  margin: 0 10px;
+  margin: 0 20px;
   padding: 5px 0;
-  border-bottom: 1px solid #ebedf0;
   display: flex;
   font-size: 14px;
   text-align: left;
+  position: relative;
+}
+.list::after{
+  content: '';
+  display: inline-block;
+  position: absolute;
+  bottom: 0;
+  left: 5px;
+  right: 5px;
+  border-bottom: 1px solid #ebedf0;
+  transform: scaleY(0.5);
+
+
 }
 .key{
   width: 100px;
